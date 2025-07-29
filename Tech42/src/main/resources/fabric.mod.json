@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "tech42",
+  "version": "${version}",
+  "name": "Tech42",
+  "description": "Tech 42 mod",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/tech42/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "dev.maximus.tech42.client.Tech42DataGenerator"
+    ],
+    "client": [
+      "dev.maximus.tech42.client.Tech42Client"
+    ],
+    "main": [
+      "dev.maximus.tech42.Tech42"
+    ]
+  },
+  "mixins": [
+    "tech42.mixins.json",
+    {
+      "config": "tech42.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "tech42": "*"
+  }
+}

@@ -3,3 +3,8 @@
 /build/
 /.idea/
 /run/
+/Tech42/.gradle/
+/Tech42/build/
+/TechCore/.gradle/
+/TechCore/build/
+/Tech42/run/

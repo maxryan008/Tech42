@@ -6,5 +6,6 @@ public class TechcoreClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        System.out.println("Initializing TechcoreClient");
     }
 }
