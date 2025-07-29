@@ -6,6 +6,6 @@ public class Techcore implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        System.out.println("Initializing Techcore");
+        Constant.LOGGER.info("Initializing Techcore Main");
     }
 }

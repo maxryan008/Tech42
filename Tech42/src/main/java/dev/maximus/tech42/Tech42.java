@@ -6,6 +6,6 @@ public class Tech42 implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        System.out.println("Initializing Tech42");
+        Constant.LOGGER.info("Initializing Tech42 Main");
     }
 }

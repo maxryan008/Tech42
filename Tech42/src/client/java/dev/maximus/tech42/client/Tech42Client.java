@@ -1,11 +1,12 @@
 package dev.maximus.tech42.client;
 
+import dev.maximus.tech42.Constant;
 import net.fabricmc.api.ClientModInitializer;
 
 public class Tech42Client implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        System.out.println("Initializing Tech42Client");
+        Constant.LOGGER.info("Initializing Tech42 Client");
     }
 }
