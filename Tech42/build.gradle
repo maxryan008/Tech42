@@ -41,7 +41,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // Use TechCore as a direct project dependency
-    modImplementation project(":TechCore")
+    modApi project(path: ":TechCore", configuration: "namedElements")
 }
 
 processResources {
