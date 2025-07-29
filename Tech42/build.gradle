@@ -39,7 +39,21 @@ def findLatestTechCoreVersion() {
     if (!coreDir.exists()) throw new GradleException("TechCore not found in mavenLocal")
 
     def versions = coreDir.listFiles().findAll { it.directory }*.name
-    return versions.sort(false).last()
+
+    def parseVersion = { v ->
+        v.tokenize('.').collect { it.toInteger() }
+    }
+
+    return versions.max { a, b ->
+        def va = parseVersion(a)
+        def vb = parseVersion(b)
+        for (int i = 0; i < Math.max(va.size(), vb.size()); i++) {
+            def ai = (i < va.size()) ? va[i] : 0
+            def bi = (i < vb.size()) ? vb[i] : 0
+            if (ai != bi) return ai <=> bi
+        }
+        return 0
+    }
 }
 
 def techcore_version = findLatestTechCoreVersion()

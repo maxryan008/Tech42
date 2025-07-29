@@ -1,6 +1,8 @@
 package dev.maximus.techcore.api.substance;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.Fluid;
 
 /**
  * Represents a chemical substance that can exist in multiple physical states (solid, liquid, gas).
@@ -21,6 +23,20 @@ public abstract class Substance {
     public abstract int getColor(); // ARGB
 
     public abstract boolean isToxic();
+
+    /**
+     * @return A solid block form of this substance, or null if none exists.
+     */
+    public Item getSolidForm() {
+        return null;
+    }
+
+    /**
+     * @return A liquid fluid form of this substance, or null if none exists.
+     */
+    public Fluid getLiquidForm() {
+        return null;
+    }
 
     /**
      * Returns the phase state of this substance under the given conditions.
