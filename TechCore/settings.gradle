@@ -5,5 +5,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "tech-mod-dev"
-include("TechCore", "Tech42")
+rootProject.name = "TechCore"
+include("TechCore")

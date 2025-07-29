@@ -1,10 +1,14 @@
 # Project exclude paths
 /.gradle/
+/gradlew/
+/gradlew.bat/
 /build/
 /.idea/
-/run/
-/Tech42/.gradle/
-/Tech42/build/
-/TechCore/.gradle/
+/TechCore/.idea/
+/TechCore/run/
 /TechCore/build/
+/TechCore/.gradle/
+/Tech42/.idea/
 /Tech42/run/
+/Tech42/build/
+/Tech42/.gradle/

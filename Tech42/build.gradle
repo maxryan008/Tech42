@@ -3,11 +3,11 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.tech42_mod_version
+version = project.mod_version
 group = project.maven_group
 
 base {
-    archivesName = project.tech42_archives_base_name
+    archivesName = project.archives_base_name
 }
 
 loom {
@@ -33,15 +33,24 @@ repositories {
     mavenLocal()
 }
 
+def findLatestTechCoreVersion() {
+    def groupPath = project.maven_group.replace('.', '/')
+    def coreDir = new File("${System.getProperty("user.home")}/.m2/repository/${groupPath}/TechCore")
+    if (!coreDir.exists()) throw new GradleException("TechCore not found in mavenLocal")
+
+    def versions = coreDir.listFiles().findAll { it.directory }*.name
+    return versions.sort(false).last()
+}
+
+def techcore_version = findLatestTechCoreVersion()
+
 dependencies {
-    // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // Use TechCore as a direct project dependency
-    modApi project(path: ":TechCore", configuration: "namedElements")
+    modImplementation "${project.maven_group}:TechCore:${techcore_version}"
 }
 
 processResources {
@@ -82,7 +91,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.tech42_archives_base_name}" }
+        rename { "${it}_${project.archives_base_name}" }
     }
 }
 
@@ -90,7 +99,7 @@ jar {
 publishing {
     publications {
         create("mavenJava", MavenPublication) {
-            artifactId = project.tech42_archives_base_name
+            artifactId = project.archives_base_name
             from components.java
         }
     }

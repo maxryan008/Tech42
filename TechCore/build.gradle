@@ -3,11 +3,11 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.techcore_mod_version
+version = project.mod_version
 group = project.maven_group
 
 base {
-    archivesName = "TechCore"
+    archivesName = project.archives_base_name
 }
 
 loom {
@@ -79,24 +79,21 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.techcore_archives_base_name}" }
+        rename { "${it}_${project.archives_base_name}" }
     }
 }
 
-// configure the maven publication
 publishing {
     publications {
-        create("mavenJava", MavenPublication) {
-            artifactId = project.techcore_archives_base_name
+        mavenJava(MavenPublication) {
+            artifactId = project.archives_base_name
+            groupId = project.maven_group
+            version = project.mod_version
             from components.java
         }
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
+        mavenLocal() // Publishes to ~/.m2/repository
     }
 }
+
