@@ -1,0 +1,7 @@
+{
+  "loader": "fabric:model",
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "minecraft:block/iron_block"
+  }
+}

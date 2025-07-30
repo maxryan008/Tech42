@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "techcore:block/gear_block_model" }
+  }
+}

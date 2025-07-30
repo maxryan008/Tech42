@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "techcore:block/shaft_block_model" }
+  }
+}

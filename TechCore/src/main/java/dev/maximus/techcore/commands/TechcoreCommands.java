@@ -3,12 +3,16 @@ package dev.maximus.techcore.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import dev.maximus.techcore.api.pipe.PipeType;
+import dev.maximus.techcore.api.pipe.TechcorePipes;
+import dev.maximus.techcore.api.substance.PhaseState;
 import dev.maximus.techcore.api.substance.Substance;
 import dev.maximus.techcore.api.substance.SubstanceRegistry;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Block;
 
 public class TechcoreCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection selection) {
@@ -27,6 +31,9 @@ public class TechcoreCommands {
                                                     return listSubstances(ctx.getSource(), celsius);
                                                 })
                                         )
+                                )
+                                .then(Commands.literal("pipe")
+                                        .executes(ctx -> listPipes(ctx.getSource()))
                                 )
                         )
         );
@@ -49,6 +56,34 @@ public class TechcoreCommands {
                     namespace, name, weight, melt, unit, boil, unit, fusion, vapor
             )));
         }
+        return 1;
+    }
+
+    private static int listPipes(CommandSourceStack source) {
+        for (var entry : TechcorePipes.getAll().entrySet()) {
+            Block block = entry.getKey();
+            PipeType type = entry.getValue();
+
+            String name = block.getDescriptionId(); // Will look like "block.tech42.copper_pipe"
+            float minTemp = type.getMinOperatingTemp() - 273.15f;
+            float maxTemp = type.getMaxOperatingTemp() - 273.15f;
+            float minPressure = type.getMinPressure();
+            float maxPressure = type.getMaxPressure();
+
+            StringBuilder phases = new StringBuilder();
+            for (PhaseState phase : PhaseState.values()) {
+                if (type.supportsPhase(phase)) {
+                    if (phases.length() > 0) phases.append(", ");
+                    phases.append(phase.name().toLowerCase());
+                }
+            }
+
+            source.sendSystemMessage(Component.literal(String.format(
+                    "%s | Phases: [%s] | Temp: %.1f°C–%.1f°C | Pressure: %.1f–%.1f atm",
+                    name, phases, minTemp, maxTemp, minPressure, maxPressure
+            )));
+        }
+
         return 1;
     }
 
