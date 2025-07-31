@@ -11,7 +11,7 @@
   "environment": "*",
   "entrypoints": {
     "fabric-datagen": [
-      "dev.maximus.tech42.client.Tech42DataGenerator"
+      "dev.maximus.tech42.Tech42DataGenerator"
     ],
     "client": [
       "dev.maximus.tech42.client.Tech42Client"

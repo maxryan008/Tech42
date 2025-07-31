@@ -13,11 +13,11 @@ public class WoodGearSmallEntity extends GearBlockEntity {
 
     @Override
     public void serverTick(Level level, BlockPos pos, BlockState state, GearBlockEntity blockEntity) {
-
+        this.addYaw(0f);
     }
 
     @Override
     public <BE extends GearBlockEntity> void init(BE blockEntity) {
-
+        System.out.println("WoodGearSmallEntity init");
     }
 }

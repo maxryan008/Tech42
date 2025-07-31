@@ -7,14 +7,13 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -23,25 +22,19 @@ import java.util.function.Supplier;
 
 public class GearBakedModel implements BakedModel {
     private final TextureAtlasSprite sprite;
-    private final ModelState state;
 
-    public GearBakedModel(TextureAtlasSprite sprite, ModelState state) {
+    public GearBakedModel(TextureAtlasSprite sprite) {
         this.sprite = sprite;
-        this.state = state;
     }
 
     @Override
-    public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-        BakedModel.super.emitBlockQuads(blockView, state, pos, randomSupplier, context);
-    }
+    public void emitBlockQuads(BlockAndTintGetter level, BlockState state, BlockPos pos, Supplier<RandomSource> random, RenderContext context) {}
 
     @Override
-    public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
-        BakedModel.super.emitItemQuads(stack, randomSupplier, context);
-    }
+    public void emitItemQuads(ItemStack stack, Supplier<RandomSource> random, RenderContext context) {}
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState blockState, @Nullable Direction direction, RandomSource randomSource) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, @NotNull RandomSource random) {
         return List.of();
     }
 
@@ -55,22 +48,14 @@ public class GearBakedModel implements BakedModel {
     @Override
     public ItemTransforms getTransforms() {
         return new ItemTransforms(
-                // third person left
-                new ItemTransform(new Vector3f(75f, 45f, 0f), new Vector3f(0f, 0.2f, -0.02f), new Vector3f(0.375f, 0.375f, 0.375f)),
-                // third person right
-                new ItemTransform(new Vector3f(75f, 45f, 0f), new Vector3f(0f, 0.2f, -0.02f), new Vector3f(0.375f, 0.375f, 0.375f)),
-                // first person left
-                new ItemTransform(new Vector3f(0f, 45f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0.4f, 0.4f, 0.4f)),
-                // first person right
-                new ItemTransform(new Vector3f(0f, 45f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0.4f, 0.4f, 0.4f)),
-                // head
-                new ItemTransform(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f)),
-                // GUI
-                new ItemTransform(new Vector3f(30f, 225f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0.625f, 0.625f, 0.625f)),
-                // ground
-                new ItemTransform(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0.2f, 0f), new Vector3f(0.25f, 0.25f, 0.25f)),
-                // fixed
-                new ItemTransform(new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0.5f, 0.5f, 0.5f))
+                new ItemTransform(new Vector3f(75f, 45f, 0f), new Vector3f(0f, 0.2f, -0.02f), new Vector3f(0.375f)),
+                new ItemTransform(new Vector3f(75f, 45f, 0f), new Vector3f(0f, 0.2f, -0.02f), new Vector3f(0.375f)),
+                new ItemTransform(new Vector3f(0f, 45f, 0f), new Vector3f(0, 0, 0), new Vector3f(0.4f)),
+                new ItemTransform(new Vector3f(0f, 45f, 0f), new Vector3f(0, 0, 0), new Vector3f(0.4f)),
+                ItemTransform.NO_TRANSFORM,
+                new ItemTransform(new Vector3f(30f, 225f, 0f), new Vector3f(0, 0, 0), new Vector3f(0.625f)),
+                new ItemTransform(new Vector3f(0, 0, 0), new Vector3f(0f, 0.2f, 0f), new Vector3f(0.25f)),
+                new ItemTransform(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0.5f))
         );
     }
 }

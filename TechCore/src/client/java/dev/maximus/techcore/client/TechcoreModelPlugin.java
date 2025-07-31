@@ -4,6 +4,7 @@ import dev.maximus.techcore.api.mechanical.TechcoreMechanicalPartRegistry;
 import dev.maximus.techcore.client.models.GearUnbakedModel;
 import dev.maximus.techcore.client.models.ShaftUnbakedModel;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,63 +13,42 @@ public class TechcoreModelPlugin implements ModelLoadingPlugin {
     public static final TechcoreModelPlugin INSTANCE = new TechcoreModelPlugin();
 
     @Override
-    public void onInitializeModelLoader(ModelLoadingPlugin.Context pluginContext) {
-        // Register model IDs (block + item)
-        pluginContext.addModels(TechcoreMechanicalPartRegistry.getAllGearModelIds());
-        pluginContext.addModels(TechcoreMechanicalPartRegistry.getAllGearItemModelIds());
-        pluginContext.addModels(TechcoreMechanicalPartRegistry.getAllShaftModelIds());
-        pluginContext.addModels(TechcoreMechanicalPartRegistry.getAllShaftItemModelIds());
+    public void onInitializeModelLoader(Context context) {
+        context.addModels(TechcoreMechanicalPartRegistry.getAllGearModelIds());
+        context.addModels(TechcoreMechanicalPartRegistry.getAllGearItemModelIds());
+        context.addModels(TechcoreMechanicalPartRegistry.getAllShaftModelIds());
+        context.addModels(TechcoreMechanicalPartRegistry.getAllShaftItemModelIds());
 
-        // Register model resolver for both block and item
-        pluginContext.resolveModel().register(context -> {
-            ResourceLocation id = context.id();
+        context.resolveModel().register(modelContext -> {
+            ResourceLocation id = modelContext.id();
+            ResourceLocation blockId = toBlockModelId(id);
 
-            if (TechcoreMechanicalPartRegistry.hasGearModel(id)) {
-                return new GearUnbakedModel(id);
+            if (TechcoreMechanicalPartRegistry.hasGearModel(blockId)) {
+                return new GearUnbakedModel(blockId);
+            } else if (TechcoreMechanicalPartRegistry.hasShaftModel(blockId)) {
+                return new ShaftUnbakedModel(blockId);
             }
-
-            // Item models redirect to their block version
-            if (TechcoreMechanicalPartRegistry.hasGearModel(itemToBlock(id))) {
-                return new GearUnbakedModel(itemToBlock(id));
-            }
-
-            if (TechcoreMechanicalPartRegistry.hasShaftModel(id)) {
-                return new ShaftUnbakedModel(id);
-            }
-
-            // Item models redirect to their block version
-            if (TechcoreMechanicalPartRegistry.hasShaftModel(itemToBlock(id))) {
-                return new ShaftUnbakedModel(itemToBlock(id));
-            }
-
             return null;
         });
 
-        // Register gear blockstate resolvers
-        for (Block block : TechcoreMechanicalPartRegistry.getRegisteredGearBlocks()) {
-            pluginContext.registerBlockStateResolver(block, blockContext -> {
-                for (BlockState state : blockContext.block().getStateDefinition().getPossibleStates()) {
-                    ResourceLocation id = TechcoreMechanicalPartRegistry.getModelId(blockContext.block());
-                    blockContext.setModel(state, new GearUnbakedModel(id));
-                }
-            });
-        }
+        registerBlockStates(context, TechcoreMechanicalPartRegistry.getRegisteredGearBlocks(), GearUnbakedModel::new);
+        registerBlockStates(context, TechcoreMechanicalPartRegistry.getRegisteredShaftBlocks(), ShaftUnbakedModel::new);
+    }
 
-        // Register shaft blockstate resolver
-        for (Block block : TechcoreMechanicalPartRegistry.getRegisteredShaftBlocks()) {
-            pluginContext.registerBlockStateResolver(block, blockContext -> {
-                for (BlockState state : blockContext.block().getStateDefinition().getPossibleStates()) {
-                    ResourceLocation id = TechcoreMechanicalPartRegistry.getModelId(blockContext.block());
-                    blockContext.setModel(state, new ShaftUnbakedModel(id));
+    private void registerBlockStates(Context context, Iterable<Block> blocks, java.util.function.Function<ResourceLocation, UnbakedModel> factory) {
+        for (Block block : blocks) {
+            ResourceLocation id = TechcoreMechanicalPartRegistry.getModelId(block);
+            context.registerBlockStateResolver(block, blockCtx -> {
+                for (BlockState state : block.getStateDefinition().getPossibleStates()) {
+                    blockCtx.setModel(state, factory.apply(id));
                 }
             });
         }
     }
 
-    private ResourceLocation itemToBlock(ResourceLocation id) {
-        // Convert item/custom_block -> block/custom_block
+    private ResourceLocation toBlockModelId(ResourceLocation id) {
         if (id.getPath().startsWith("item/")) {
-            return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath().replace("item/", "block/"));
+            return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath().substring(5).replaceFirst("^", "block/"));
         }
         return id;
     }

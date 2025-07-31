@@ -52,7 +52,7 @@ public class TechcoreMechanicalPartRegistry {
 
         // Create block instance
         GearBlock block = new GearBlock(
-                Block.Properties.ofFullCopy(Blocks.IRON_BLOCK),
+                Block.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion(),
                 (pos, state) -> supplier.create((BlockPos) pos, (BlockState) state)
         );
 
@@ -119,6 +119,9 @@ public class TechcoreMechanicalPartRegistry {
     }
 
     public static boolean hasGearModel(ResourceLocation id) {
+        if (!id.getPath().startsWith("block/")) {
+            id = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath());
+        }
         return REGISTERED_GEAR_MODELS.containsKey(id);
     }
     public static boolean hasShaftModel(ResourceLocation id) {
@@ -142,10 +145,16 @@ public class TechcoreMechanicalPartRegistry {
     }
 
     public static MechanicalPartModelDefinition getGearModelDefinition(ResourceLocation id) {
+        if (!id.getPath().startsWith("block/")) {
+            id = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath());
+        }
         return REGISTERED_GEAR_MODELS.get(id);
     }
 
     public static MechanicalPartModelDefinition getShaftModelDefinition(ResourceLocation id) {
+        if (!id.getPath().startsWith("block/")) {
+            id = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath());
+        }
         return REGISTERED_SHAFT_MODELS.get(id);
     }
 
@@ -180,10 +189,16 @@ public class TechcoreMechanicalPartRegistry {
     }
 
     public static Class<? extends GearConfig> getRegisteredGearConfig(ResourceLocation modelId) {
+        if (!modelId.getPath().startsWith("block/")) {
+            modelId = ResourceLocation.fromNamespaceAndPath(modelId.getNamespace(), "block/" + modelId.getPath());
+        }
         return REGISTERED_GEAR_CONFIGS.get(modelId);
     }
 
     public static Class<? extends ShaftConfig> getRegisteredShaftConfig(ResourceLocation modelId) {
+        if (!modelId.getPath().startsWith("block/")) {
+            modelId = ResourceLocation.fromNamespaceAndPath(modelId.getNamespace(), "block/" + modelId.getPath());
+        }
         return REGISTERED_SHAFT_CONFIGS.get(modelId);
     }
 }

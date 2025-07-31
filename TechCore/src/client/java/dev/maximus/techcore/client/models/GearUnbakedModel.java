@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.function.Function;
 
 public class GearUnbakedModel implements UnbakedModel {
@@ -21,18 +21,16 @@ public class GearUnbakedModel implements UnbakedModel {
 
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        return List.of();
+        return Collections.emptyList();
     }
 
     @Override
-    public void resolveParents(Function<ResourceLocation, UnbakedModel> function) {
-
-    }
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelLoader) {}
 
     @Override
-    public @Nullable BakedModel bake(ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState) {
+    public @Nullable BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state) {
         MechanicalPartModelDefinition def = TechcoreMechanicalPartRegistry.getGearModelDefinition(id);
-
-        return new GearBakedModel(function.apply(new Material(TextureAtlas.LOCATION_BLOCKS, def.textureLocation())), modelState);
+        TextureAtlasSprite sprite = spriteGetter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, def.textureLocation()));
+        return new GearBakedModel(sprite);
     }
 }
