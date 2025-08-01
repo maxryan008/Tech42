@@ -1,6 +1,7 @@
 package dev.maximus.techcore.api.mechanical;
 
 import dev.maximus.techcore.TechcoreBlockEntities;
+import dev.maximus.techcore.mechanical.MechanicalNetworkManager;
 import dev.maximus.techcore.model.ModelBuilder;
 import dev.maximus.techcore.model.QuadGeometryData;
 import net.minecraft.core.BlockPos;
@@ -21,7 +22,9 @@ import java.util.List;
 
 public abstract class GearBlockEntity extends BlockEntity {
     protected final ResourceLocation id;
-    protected float yaw = 0.0f;
+
+    // Rotation state for rendering only
+    private float yaw = 0.0f;
     private float prevYaw = 0.0f;
 
     public final List<QuadGeometryData> north = new ArrayList<>();
@@ -31,42 +34,35 @@ public abstract class GearBlockEntity extends BlockEntity {
     public final List<QuadGeometryData> up    = new ArrayList<>();
     public final List<QuadGeometryData> down  = new ArrayList<>();
 
+    protected MechanicalNode node;
+
     public GearBlockEntity(BlockPos pos, BlockState state, ResourceLocation id) {
         super(TechcoreBlockEntities.BLOCK_ENTITIES.get(id).value(), pos, state);
         this.id = id;
     }
 
-    protected static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
-        if (blockEntity instanceof GearBlockEntity gearBlockEntity) {
-            gearBlockEntity.serverTick(level, pos, state, gearBlockEntity);
-        }
-    }
-
-    public abstract void serverTick(Level level, BlockPos pos, BlockState state, GearBlockEntity blockEntity);
-
-    public abstract <BE extends GearBlockEntity> void init(BE blockEntity);
-
-    public ResourceLocation getMultiblockId() {
+    public ResourceLocation getId() {
         return this.id;
     }
 
     @Override
     public void setLevel(Level level) {
         super.setLevel(level);
-        this.setup(this);
         if (!level.isClientSide()) {
-            this.init(this);
+            this.initNode(level);
         }
+        this.setupModel(this);
     }
 
-    private <BE extends GearBlockEntity> void setup(BE blockEntity) {
-        Class<? extends GearConfig> configClass = TechcoreMechanicalPartRegistry.getRegisteredGearConfig(blockEntity.id);
+    private <BE extends GearBlockEntity> void setupModel(BE blockEntity) {
+        Class<? extends GearConfig> configClass = TechcoreMechanicalPartRegistry.getRegisteredGearConfig(this.id);
         GearConfig config;
         try {
             config = configClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Failed to instantiate GearConfig for " + id, e);
         }
+
         List<QuadGeometryData> allQuads = ModelBuilder.buildGearModel(config);
         ModelBuilder.classifyQuadsByDirection(
                 allQuads,
@@ -79,6 +75,23 @@ public abstract class GearBlockEntity extends BlockEntity {
         );
     }
 
+    private void initNode(Level level) {
+        if (this.node == null) {
+            this.node = new MechanicalNode(level, this.getBlockPos(), this.getConfig(), false);
+            MechanicalNetworkManager.get(this.getLevel()).addAndAlignNode(this.node);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level != null && !this.level.isClientSide() && this.node != null) {
+            MechanicalNetworkManager.get(this.level).unregister(this.node);
+        }
+    }
+
+    public abstract GearConfig getConfig();
+
     public float getYaw() {
         return this.yaw;
     }
@@ -87,47 +100,39 @@ public abstract class GearBlockEntity extends BlockEntity {
         return this.prevYaw;
     }
 
-    public void setYaw(float yaw) {
-        if (this.level != null && this.level.isClientSide) {
-            this.prevYaw = this.yaw;
-        }
-        this.yaw = yaw;
-
-        assert this.level != null;
-        if (!this.level.isClientSide) {
-            this.setChanged();
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
-        }
+    public void clientTick() {
+        this.prevYaw = this.yaw;
     }
 
-    public void addYaw(float yaw) {
-        if (this.level != null && this.level.isClientSide) {
-            this.prevYaw = this.yaw;
-        }
-        this.yaw += yaw;
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        if (be instanceof GearBlockEntity gear) {
+            if (!level.isClientSide) {
+                if (gear.node != null) {
+                    // Server updates yaw using current speed
+                    gear.prevYaw = gear.yaw;
+                    gear.yaw = gear.node.yaw;
+                    gear.node.yaw += (gear.node.speed / 60f * 2f * (float)Math.PI);
+                    gear.setChanged();
+                    gear.level.sendBlockUpdated(gear.worldPosition, gear.getBlockState(), gear.getBlockState(), 3);
+                }
 
-        assert this.level != null;
-        if (!this.level.isClientSide) {
-            this.setChanged();
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+                MechanicalNetworkManager.get(level).tickNode(gear.node);
+            } else {
+                gear.clientTick(); // Only interpolates
+            }
         }
     }
 
     @Override
-    public @Nullable Object getRenderData() {
-        return this;
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+        this.yaw = tag.getFloat("Yaw");
     }
 
     @Override
-    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.loadAdditional(compoundTag, provider);
-        this.yaw = compoundTag.getFloat("Yaw");
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.saveAdditional(compoundTag, provider);
-        compoundTag.putFloat("Yaw", this.yaw);
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        tag.putFloat("Yaw", this.yaw);
     }
 
     @Override
@@ -138,5 +143,10 @@ public abstract class GearBlockEntity extends BlockEntity {
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public @Nullable Object getRenderData() {
+        return this;
     }
 }

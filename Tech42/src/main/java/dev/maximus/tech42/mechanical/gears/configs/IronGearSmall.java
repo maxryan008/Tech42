@@ -3,7 +3,7 @@ package dev.maximus.tech42.mechanical.gears.configs;
 import dev.maximus.tech42.mechanical.materials.WoodenMechanicalMaterial;
 import dev.maximus.techcore.api.mechanical.GearConfig;
 
-public class WoodGearSmall extends GearConfig implements WoodenMechanicalMaterial {
+public class IronGearSmall extends GearConfig implements WoodenMechanicalMaterial {
     @Override
     public float getGearRadius() {
         return 0.4f; // 0.8 block diameter
@@ -38,22 +38,22 @@ public class WoodGearSmall extends GearConfig implements WoodenMechanicalMateria
 
     @Override
     public float getMass() {
-        return 10f; // kilograms
+        return 100f; // kilograms
     }
 
     @Override
     public float getFriction() {
-        return 0.15f; // relatively high for wood
+        return 10f;
     }
 
     @Override
     public float getMaxTorque() {
-        return 6.0f; // Nm; lightweight gear
+        return 500; // Nm
     }
 
     @Override
     public float getMaxSpeed() {
-        return 300.0f; // safe max RPM for small wood gear
+        return 16000.0f; //rpm
     }
 
     // --- Lubrication behavior ---
@@ -65,6 +65,6 @@ public class WoodGearSmall extends GearConfig implements WoodenMechanicalMateria
 
     @Override
     public float getLubricationDecayRate() {
-        return 0.03f; // loses 3% effectiveness per tick
+        return 0.01f;
     }
 }

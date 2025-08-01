@@ -15,6 +15,7 @@ public class Tech42CreativeTabs {
             .icon(() -> new ItemStack(getItem("wood_gear_small")))
             .displayItems((params, output) -> {
                 output.accept(getItem("wood_gear_small"));
+                output.accept(getItem("iron_gear_small"));
             })
             .build();
 
