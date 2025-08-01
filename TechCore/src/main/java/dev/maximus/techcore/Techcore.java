@@ -1,7 +1,7 @@
 package dev.maximus.techcore;
 
 import dev.maximus.techcore.commands.TechcoreCommands;
-import dev.maximus.techcore.mechanical.MechanicalNetworkManager;
+import dev.maximus.techcore.mechanical.graph.MechanicalGraphManager;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -17,7 +17,7 @@ public class Techcore implements ModInitializer {
         // Register mechanical tick handler
         ServerTickEvents.END_WORLD_TICK.register(world -> {
             if (world instanceof ServerLevel serverLevel) {
-                MechanicalNetworkManager.get(serverLevel).tick(serverLevel);
+                MechanicalGraphManager.get().tick(serverLevel);
             }
         });
     }

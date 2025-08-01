@@ -5,19 +5,15 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.maximus.techcore.api.mechanical.GearBlockEntity;
 import dev.maximus.techcore.model.QuadGeometryData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.LightLayer;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -33,7 +29,9 @@ public class GearBlockEntityRenderer implements BlockEntityRenderer<GearBlockEnt
     @Override
     public void render(GearBlockEntity entity, float tickDelta, PoseStack matrices,
                        MultiBufferSource vertexConsumers, int light, int overlay) {
-        float interpolatedYaw = entity.getPrevYaw() + (entity.getYaw() - entity.getPrevYaw()) * tickDelta;
+        float yaw = entity.getYaw();
+        float prevYaw = entity.getPrevYaw();
+        float interpolatedYaw = prevYaw + (yaw - prevYaw) * tickDelta;
 
         matrices.pushPose();
         matrices.translate(0.5, 0.5, 0.5);

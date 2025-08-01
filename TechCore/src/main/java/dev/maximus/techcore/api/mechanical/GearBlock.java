@@ -1,11 +1,9 @@
 package dev.maximus.techcore.api.mechanical;
 
 
-import dev.maximus.techcore.mechanical.MechanicalNetworkManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -42,10 +40,10 @@ public class GearBlock<BE extends GearBlockEntity> extends Block implements Enti
     //FIXME remove later
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
-        BlockEntity be = level.getBlockEntity(blockPos);
+        BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof GearBlockEntity gear) {
             MechanicalNode node = gear.node;
             if (node != null) {

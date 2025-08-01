@@ -2,7 +2,6 @@ package dev.maximus.tech42.mechanical.gears.block_entities;
 
 import dev.maximus.tech42.Constant;
 import dev.maximus.tech42.mechanical.gears.configs.IronGearSmall;
-import dev.maximus.tech42.mechanical.gears.configs.WoodGearSmall;
 import dev.maximus.techcore.api.mechanical.GearBlockEntity;
 import dev.maximus.techcore.api.mechanical.GearConfig;
 import net.minecraft.core.BlockPos;

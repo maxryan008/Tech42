@@ -1,7 +1,7 @@
 package dev.maximus.techcore.api.mechanical;
 
 import dev.maximus.techcore.TechcoreBlockEntities;
-import dev.maximus.techcore.mechanical.MechanicalNetworkManager;
+import dev.maximus.techcore.mechanical.graph.MechanicalGraphManager;
 import dev.maximus.techcore.model.ModelBuilder;
 import dev.maximus.techcore.model.QuadGeometryData;
 import net.minecraft.core.BlockPos;
@@ -77,8 +77,8 @@ public abstract class GearBlockEntity extends BlockEntity {
 
     private void initNode(Level level) {
         if (this.node == null) {
-            this.node = new MechanicalNode(level, this.getBlockPos(), this.getConfig(), false);
-            MechanicalNetworkManager.get(this.getLevel()).addAndAlignNode(this.node);
+            this.node = new MechanicalNode(level, this.getBlockPos(), this.getConfig());
+            MechanicalGraphManager.get().registerNode(level, this.node);
         }
     }
 
@@ -86,7 +86,7 @@ public abstract class GearBlockEntity extends BlockEntity {
     public void setRemoved() {
         super.setRemoved();
         if (this.level != null && !this.level.isClientSide() && this.node != null) {
-            MechanicalNetworkManager.get(this.level).unregister(this.node);
+            MechanicalGraphManager.get().unregisterNode(this.getBlockPos());
         }
     }
 
@@ -108,17 +108,15 @@ public abstract class GearBlockEntity extends BlockEntity {
         if (be instanceof GearBlockEntity gear) {
             if (!level.isClientSide) {
                 if (gear.node != null) {
-                    // Server updates yaw using current speed
                     gear.prevYaw = gear.yaw;
-                    gear.yaw = gear.node.yaw;
-                    gear.node.yaw += (gear.node.speed / 60f * 2f * (float)Math.PI);
+                    gear.yaw = gear.node.yaw + gear.node.yawOffset;
                     gear.setChanged();
                     gear.level.sendBlockUpdated(gear.worldPosition, gear.getBlockState(), gear.getBlockState(), 3);
                 }
 
-                MechanicalNetworkManager.get(level).tickNode(gear.node);
+                MechanicalGraphManager.get().tick(level);
             } else {
-                gear.clientTick(); // Only interpolates
+                gear.clientTick();
             }
         }
     }
