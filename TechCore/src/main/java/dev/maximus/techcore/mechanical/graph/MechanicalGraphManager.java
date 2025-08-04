@@ -1,6 +1,7 @@
 package dev.maximus.techcore.mechanical.graph;
 
 import dev.maximus.techcore.api.mechanical.MechanicalNode;
+import dev.maximus.techcore.api.mechanical.gear.GearConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -21,13 +22,21 @@ public class MechanicalGraphManager {
         for (BlockPos neighbor : getNeighbors(node.pos)) {
             MechanicalNode other = nodeMap.get(neighbor);
             if (other != null && other.cluster != null) {
-                float gearRatio = computeGearRatio(node, other);
+                float gearRatio = 1;
+                if (node.config instanceof GearConfig gearConfig && other.config instanceof GearConfig gearConfig2) {
+                    gearRatio = computeGearRatio(gearConfig, gearConfig2);
+                }
                 node.speedRatio = other.speedRatio * -gearRatio; // Invert direction
 
                 // Set yaw offset based on neighbor count
-                float offset = 360f / (node.config.getToothCount() * 2f);
-                node.yawOffset = offset + other.yawOffset;
-                node.yaw = offset;
+                if (node.config instanceof GearConfig gearConfig) {
+                    float offset = 360f / (gearConfig.getToothCount() * 2f);
+                    node.yawOffset = offset + other.yawOffset;
+                    node.yaw = offset;
+                } else {
+                    node.yawOffset = 0;
+                    node.yaw = 0;
+                }
                 break; // Only use the first valid neighbor
             }
         }
@@ -42,7 +51,10 @@ public class MechanicalGraphManager {
             MechanicalNode other = nodeMap.get(neighbor);
             if (other == null || other.cluster == null) continue;
 
-            float gearRatio = computeGearRatio(node, other);
+            float gearRatio = 1;
+            if (node.config instanceof GearConfig gearConfig && other.config instanceof GearConfig gearConfig2) {
+                gearRatio = computeGearRatio(gearConfig, gearConfig2);
+            }
             routingGraph.connectJunctions(node.pos, neighbor, gearRatio);
 
             // Always merge smaller into larger
@@ -108,10 +120,15 @@ public class MechanicalGraphManager {
 
         for (int i = 0; i < ordered.size(); i++) {
             MechanicalNode node = ordered.get(i);
-            float teeth = node.config.getToothCount();
-            float offset = 360f / (teeth * 2f) * i;
-            node.yawOffset = offset;
-            node.yaw = offset;
+            if (node.config instanceof GearConfig gearConfig) {
+                float teeth = gearConfig.getToothCount();
+                float offset = 360f / (teeth * 2f) * i;
+                node.yawOffset = offset;
+                node.yaw = offset;
+            } else {
+                node.yawOffset = 0;
+                node.yaw = 0;
+            }
             cluster.addNode(node);
         }
     }
@@ -122,12 +139,15 @@ public class MechanicalGraphManager {
         }
     }
 
-    private float computeGearRatio(MechanicalNode a, MechanicalNode b) {
-        return a.config.getGearRadius() / b.config.getGearRadius();
+    private float computeGearRatio(GearConfig a, GearConfig b) {
+        return a.getGearRadius() / b.getGearRadius();
     }
 
     private boolean validateRPMMatch(MechanicalNode a, MechanicalNode b) {
-        float ratio = computeGearRatio(a, b);
+        float ratio = 1;
+        if (a.config instanceof GearConfig gearConfig && b.config instanceof GearConfig gearConfig2) {
+            ratio = computeGearRatio(gearConfig, gearConfig2);
+        }
 
         // Expected direction-inverted speed ratio
         float expected = a.speedRatio * (-ratio); // Always invert

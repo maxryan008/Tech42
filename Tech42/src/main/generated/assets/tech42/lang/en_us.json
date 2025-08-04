@@ -1,4 +1,6 @@
 {
+  "block.tech42.iron_gear_small": "Small Iron Gear",
+  "block.tech42.iron_shaft": "Iron Shaft",
   "block.tech42.wood_gear_small": "Small Wooden Gear",
   "itemGroup.tech42.tab": "Tech42"
 }

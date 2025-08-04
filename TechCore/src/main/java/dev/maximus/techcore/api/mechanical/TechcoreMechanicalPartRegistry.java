@@ -104,7 +104,7 @@ public class TechcoreMechanicalPartRegistry {
 
         // Create block instance
         ShaftBlock block = new ShaftBlock(
-                Block.Properties.ofFullCopy(Blocks.IRON_BLOCK),
+                Block.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion(),
                 (pos, state) -> supplier.create((BlockPos) pos, (BlockState) state)
         );
 
@@ -130,11 +130,13 @@ public class TechcoreMechanicalPartRegistry {
         return REGISTERED_GEAR_MODELS.containsKey(id);
     }
     public static boolean hasShaftModel(ResourceLocation id) {
+        if (!id.getPath().startsWith("block/")) {
+            id = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "block/" + id.getPath());
+        }
         return REGISTERED_SHAFT_MODELS.containsKey(id);
     }
 
     public static Block getRegisteredGearBlock(ResourceLocation typeId) {
-        // If the typeId isn't already prefixed with "block/", try to remap
         if (!typeId.getPath().startsWith("block/")) {
             typeId = ResourceLocation.fromNamespaceAndPath(typeId.getNamespace(), "block/" + typeId.getPath());
         }
@@ -142,7 +144,6 @@ public class TechcoreMechanicalPartRegistry {
     }
 
     public static Block getRegisteredShaftBlock(ResourceLocation typeId) {
-        // If the typeId isn't already prefixed with "block/", try to remap
         if (!typeId.getPath().startsWith("block/")) {
             typeId = ResourceLocation.fromNamespaceAndPath(typeId.getNamespace(), "block/" + typeId.getPath());
         }

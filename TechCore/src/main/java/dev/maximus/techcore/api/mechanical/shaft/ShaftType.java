@@ -5,22 +5,19 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ShaftType {
     private final ResourceLocation id;
-    private final GearMaterial material;
-    private final float maxRpm;
-    private final float maxTorque;
-    private final float maxStress;
+    private final ShaftMaterial material;
+    private final int size; // e.g., 1 = 1m long, or 1x1 shaft
 
-    public ShaftType(ResourceLocation id, GearMaterial material, float maxRpm, float maxTorque, float maxStress) {
+    public ShaftType(ResourceLocation id, ShaftMaterial material, int size) {
         this.id = id;
         this.material = material;
-        this.maxRpm = maxRpm;
-        this.maxTorque = maxTorque;
-        this.maxStress = maxStress;
+        this.size = size;
     }
 
     public ResourceLocation getId() { return id; }
-    public GearMaterial getMaterial() { return material; }
-    public float getMaxRpm() { return maxRpm; }
-    public float getMaxTorque() { return maxTorque; }
-    public float getMaxStress() { return maxStress; }
+    public ShaftMaterial getMaterial() { return material; }
+    public int getSize() { return size; }
+
+    public float getMaxTorque() { return material.maxTorque(); }
+    public float getInertia() { return material.baseInertia() * size * material.density(); }
 }

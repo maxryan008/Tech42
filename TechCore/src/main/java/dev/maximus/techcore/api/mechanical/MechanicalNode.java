@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 public class MechanicalNode {
     public final Level level;
     public final BlockPos pos;
-    public final GearConfig config;
+    public final MechanicalConfig config;
 
     public float inputPower = 0; // Power supplied by motor (watts)
     public float torque = 0;
@@ -24,7 +24,7 @@ public class MechanicalNode {
 
     public GraphCluster cluster = null;
 
-    public MechanicalNode(Level level, BlockPos pos, GearConfig config) {
+    public MechanicalNode(Level level, BlockPos pos, MechanicalConfig config) {
         this.level = level;
         this.pos = pos;
         this.config = config;
@@ -50,11 +50,11 @@ public class MechanicalNode {
         this.isLubricated = true;
     }
 
-    public float getTotalFrictionTorque(float rpm) {
+    public float getTotalFrictionTorque(float rpm, GearConfig gearConfig) {
         if (rpm > 0.01) {
-            return config.getDynamicFriction();
+            return gearConfig.getDynamicFriction();
         } else {
-            return config.getStaticFriction();
+            return gearConfig.getStaticFriction();
         }
     }
 }

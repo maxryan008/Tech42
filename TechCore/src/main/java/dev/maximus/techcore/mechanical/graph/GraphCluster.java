@@ -1,6 +1,7 @@
 package dev.maximus.techcore.mechanical.graph;
 
 import dev.maximus.techcore.api.mechanical.MechanicalNode;
+import dev.maximus.techcore.api.mechanical.gear.GearConfig;
 import net.minecraft.core.BlockPos;
 
 import java.util.Collection;
@@ -45,8 +46,10 @@ public class GraphCluster {
                 totalPowerInput += node.inputPower;
             }
 
-            float localRPM = networkRPM * Math.abs(node.speedRatio);
-            totalLoadTorque += node.getTotalFrictionTorque(localRPM);
+            if (node.config instanceof GearConfig gearConfig) {
+                float localRPM = networkRPM * Math.abs(node.speedRatio);
+                totalLoadTorque += node.getTotalFrictionTorque(localRPM, gearConfig);
+            }
         }
 
         // Step 2: Estimate equilibrium RPM based on power and load
@@ -68,8 +71,6 @@ public class GraphCluster {
             // Apply negative acceleration due to friction torque
             float angularDecel = totalLoadTorque / totalInertia; // RPM per tick
             float delta = angularDecel * 0.5f;
-
-            System.out.println();
 
             // Decelerate toward 0
             if (networkRPM > delta) {

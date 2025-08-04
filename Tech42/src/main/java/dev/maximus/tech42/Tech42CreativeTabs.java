@@ -12,15 +12,20 @@ import net.minecraft.world.level.block.Block;
 public class Tech42CreativeTabs {
     public static final CreativeModeTab TECH42_TAB = FabricItemGroup.builder()
             .title(Component.translatable("itemGroup.tech42.tab"))
-            .icon(() -> new ItemStack(getItem("wood_gear_small")))
+            .icon(() -> new ItemStack(getGear("wood_gear_small")))
             .displayItems((params, output) -> {
-                output.accept(getItem("wood_gear_small"));
-                output.accept(getItem("iron_gear_small"));
+                output.accept(getGear("wood_gear_small"));
+                output.accept(getGear("iron_gear_small"));
+                output.accept(getShaft("iron_shaft"));
             })
             .build();
 
-    public static final Block getItem(String id) {
+    public static final Block getGear(String id) {
         return TechcoreMechanicalPartRegistry.getRegisteredGearBlock(Constant.id(id));
+    }
+
+    public static final Block getShaft(String id) {
+        return TechcoreMechanicalPartRegistry.getRegisteredShaftBlock(Constant.id(id));
     }
 
     public static void register() {

@@ -1,6 +1,7 @@
 package dev.maximus.techcore.model;
 
 import dev.maximus.techcore.api.mechanical.gear.GearConfig;
+import dev.maximus.techcore.api.mechanical.shaft.ShaftConfig;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -113,6 +114,21 @@ public class ModelBuilder {
             }
 
             return quads;
+    }
+
+    public static List<QuadGeometryData> buildShaftModel(ShaftConfig config) {
+        float radius = config.getShaftRadius();
+        float length = 1;
+
+        float x1 = 0.5f - radius;
+        float x2 = 0.5f + radius;
+        float z1 = 0.5f - radius;
+        float z2 = 0.5f + radius;
+
+        float y1 = 0.5f - length / 2f;
+        float y2 = 0.5f + length / 2f;
+
+        return box(x1, y1, z1, x2, y2, z2);
     }
 
     public static void classifyQuadsByDirection(

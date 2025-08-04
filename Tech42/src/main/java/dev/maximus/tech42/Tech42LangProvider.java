@@ -18,5 +18,7 @@ public class Tech42LangProvider extends FabricLanguageProvider {
 
         // Blocks
         translationBuilder.add("block.tech42.wood_gear_small", "Small Wooden Gear");
+        translationBuilder.add("block.tech42.iron_gear_small", "Small Iron Gear");
+        translationBuilder.add("block.tech42.iron_shaft", "Iron Shaft");
     }
 }

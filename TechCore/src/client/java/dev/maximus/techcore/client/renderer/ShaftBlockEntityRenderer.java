@@ -2,7 +2,7 @@ package dev.maximus.techcore.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import dev.maximus.techcore.api.mechanical.gear.GearBlockEntity;
+import dev.maximus.techcore.api.mechanical.shaft.ShaftBlockEntity;
 import dev.maximus.techcore.model.QuadGeometryData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -13,44 +13,22 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
-import org.joml.Quaternionf;
 
 import java.util.List;
 
-public class GearBlockEntityRenderer implements BlockEntityRenderer<GearBlockEntity> {
+public class ShaftBlockEntityRenderer implements BlockEntityRenderer<ShaftBlockEntity> {
     private final TextureAtlasSprite sprite;
 
-    public GearBlockEntityRenderer(ResourceLocation texture) {
+    public ShaftBlockEntityRenderer(ResourceLocation texture) {
         this.sprite = Minecraft.getInstance()
                 .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                 .apply(texture);
     }
 
     @Override
-    public void render(GearBlockEntity entity, float ignored, PoseStack matrices,
+    public void render(ShaftBlockEntity entity, float ignored, PoseStack matrices,
                        MultiBufferSource vertexConsumers, int light, int overlay) {
-        float tickDelta = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks(); // Use this instead
-
-        float yaw = entity.getYaw();
-        float prevYaw = entity.getPrevYaw();
-        boolean reversed = entity.isReversed();
-
-        if (reversed) {
-            if (yaw - prevYaw > 0) {
-                prevYaw += 360;
-            }
-        } else {
-            if (prevYaw - yaw > 0) {
-                prevYaw -= 360;
-            }
-        }
-
-        float interpolatedYaw = prevYaw + (yaw - prevYaw) * tickDelta;
-
         matrices.pushPose();
-        matrices.translate(0.5, 0.5, 0.5);
-        matrices.mulPose(new Quaternionf().rotateY((float) Math.toRadians(interpolatedYaw)));
-        matrices.translate(-0.5, -0.5, -0.5);
 
         VertexConsumer buffer = vertexConsumers.getBuffer(RenderType.cutout());
 
