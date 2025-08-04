@@ -16,7 +16,8 @@ public abstract class GearConfig {
 
     // Physical properties
     public abstract float getMass();            // kg (affects inertia)
-    public abstract float getFriction();        // friction coefficient (affects load)
+    public abstract float getStaticFriction(); // Nm
+    public abstract float getDynamicFriction();  // Nm·s/rad
     public abstract float getMaxTorque();       // Nm (above this: tooth damage)
     public abstract float getMaxSpeed();        // rad/tick or degrees/tick (above this: shatter)
     public float getInertia() {

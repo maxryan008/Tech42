@@ -26,6 +26,7 @@ public abstract class GearBlockEntity extends BlockEntity {
     // Rotation state for rendering only
     private float yaw = 0.0f;
     private float prevYaw = 0.0f;
+    private boolean reversed = false;
 
     public final List<QuadGeometryData> north = new ArrayList<>();
     public final List<QuadGeometryData> south = new ArrayList<>();
@@ -101,7 +102,6 @@ public abstract class GearBlockEntity extends BlockEntity {
     }
 
     public void clientTick() {
-        this.prevYaw = this.yaw;
     }
 
     public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
@@ -110,11 +110,10 @@ public abstract class GearBlockEntity extends BlockEntity {
                 if (gear.node != null) {
                     gear.prevYaw = gear.yaw;
                     gear.yaw = gear.node.yaw + gear.node.yawOffset;
+                    gear.reversed = gear.node.speedRatio == -1;
                     gear.setChanged();
                     gear.level.sendBlockUpdated(gear.worldPosition, gear.getBlockState(), gear.getBlockState(), 3);
                 }
-
-                MechanicalGraphManager.get().tick(level);
             } else {
                 gear.clientTick();
             }
@@ -125,12 +124,16 @@ public abstract class GearBlockEntity extends BlockEntity {
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         this.yaw = tag.getFloat("Yaw");
+        this.prevYaw = tag.getFloat("PrevYaw");
+        this.reversed = tag.getBoolean("Reversed");
     }
 
     @Override
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         tag.putFloat("Yaw", this.yaw);
+        tag.putFloat("PrevYaw", this.prevYaw);
+        tag.putBoolean("Reversed", this.reversed);
     }
 
     @Override
@@ -146,5 +149,13 @@ public abstract class GearBlockEntity extends BlockEntity {
     @Override
     public @Nullable Object getRenderData() {
         return this;
+    }
+
+    public boolean isReversed() {
+        return reversed;
+    }
+
+    public void setReversed(boolean reversed) {
+        this.reversed = reversed;
     }
 }

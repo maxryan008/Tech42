@@ -9,7 +9,7 @@ public class MechanicalNode {
     public final BlockPos pos;
     public final GearConfig config;
 
-    public float inputTorque = 0;
+    public float inputPower = 0; // Power supplied by motor (watts)
     public float torque = 0;
     public float speed = 0;
     public float speedRatio = 1.0f;
@@ -30,14 +30,7 @@ public class MechanicalNode {
     }
 
     public void tick() {
-        applyFriction();
         decayLubrication();
-    }
-
-    private void applyFriction() {
-        float friction = config.getFriction() * frictionModifier;
-        torque -= friction;
-        if (torque < 0) torque = 0;
     }
 
     private void decayLubrication() {
@@ -56,7 +49,11 @@ public class MechanicalNode {
         this.isLubricated = true;
     }
 
-    public float getLoad() {
-        return (Math.abs(speed) * config.getFriction() + config.getFriction()) * 0.01f;
+    public float getTotalFrictionTorque(float rpm) {
+        if (rpm > 0.01) {
+            return config.getDynamicFriction();
+        } else {
+            return config.getStaticFriction();
+        }
     }
 }

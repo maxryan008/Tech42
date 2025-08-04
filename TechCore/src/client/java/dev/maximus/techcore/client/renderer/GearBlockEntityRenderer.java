@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Quaternionf;
 
@@ -27,10 +28,28 @@ public class GearBlockEntityRenderer implements BlockEntityRenderer<GearBlockEnt
     }
 
     @Override
-    public void render(GearBlockEntity entity, float tickDelta, PoseStack matrices,
+    public void render(GearBlockEntity entity, float ignored, PoseStack matrices,
                        MultiBufferSource vertexConsumers, int light, int overlay) {
+        float tickDelta = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks(); // Use this instead
+
         float yaw = entity.getYaw();
         float prevYaw = entity.getPrevYaw();
+        boolean reversed = entity.isReversed();
+
+        if (reversed) {
+            if (yaw - prevYaw > 0) {
+                prevYaw += 360;
+            }
+        } else {
+            if (prevYaw - yaw > 0) {
+                prevYaw -= 360;
+            }
+        }
+
+
+//        if (yaw < 100 && prevYaw > 260) prevYaw -= 360;
+//        else if (yaw > 260 && prevYaw < 100) prevYaw += 360;
+
         float interpolatedYaw = prevYaw + (yaw - prevYaw) * tickDelta;
 
         matrices.pushPose();

@@ -38,12 +38,17 @@ public class WoodGearSmall extends GearConfig implements WoodenMechanicalMateria
 
     @Override
     public float getMass() {
-        return 10f; // kilograms
+        return 50f; // kilograms
     }
 
     @Override
-    public float getFriction() {
-        return 0.15f; // relatively high for wood
+    public float getStaticFriction() {
+        return 2f;
+    }
+
+    @Override
+    public float getDynamicFriction() {
+        return 1f;
     }
 
     @Override

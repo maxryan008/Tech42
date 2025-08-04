@@ -48,11 +48,11 @@ public class GearBlock<BE extends GearBlockEntity> extends Block implements Enti
             MechanicalNode node = gear.node;
             if (node != null) {
                 if (player.isShiftKeyDown()) {
-                    node.inputTorque = Math.max(0, node.inputTorque - 1);
-                    player.displayClientMessage(Component.literal("Torque: " + node.inputTorque + " Nm").withStyle(ChatFormatting.RED), true);
+                    node.inputPower = Math.max(0, node.inputPower - 1);
+                    player.displayClientMessage(Component.literal("Power: " + node.inputPower + " W").withStyle(ChatFormatting.RED), true);
                 } else {
-                    node.inputTorque += 1;
-                    player.displayClientMessage(Component.literal("Torque: " + node.inputTorque + " Nm").withStyle(ChatFormatting.GREEN), true);
+                    node.inputPower += 1;
+                    player.displayClientMessage(Component.literal("Power: " + node.inputPower + " W").withStyle(ChatFormatting.GREEN), true);
                 }
             }
         }
