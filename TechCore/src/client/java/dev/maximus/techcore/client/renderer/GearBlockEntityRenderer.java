@@ -2,6 +2,7 @@ package dev.maximus.techcore.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import dev.maximus.techcore.api.mechanical.gear.GearBlock;
 import dev.maximus.techcore.api.mechanical.gear.GearBlockEntity;
 import dev.maximus.techcore.model.QuadGeometryData;
 import net.minecraft.client.Minecraft;
@@ -29,26 +30,31 @@ public class GearBlockEntityRenderer implements BlockEntityRenderer<GearBlockEnt
     @Override
     public void render(GearBlockEntity entity, float ignored, PoseStack matrices,
                        MultiBufferSource vertexConsumers, int light, int overlay) {
-        float tickDelta = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks(); // Use this instead
+        float tickDelta = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
 
         float yaw = entity.getYaw();
         float prevYaw = entity.getPrevYaw();
         boolean reversed = entity.isReversed();
 
         if (reversed) {
-            if (yaw - prevYaw > 0) {
-                prevYaw += 360;
-            }
+            if (yaw - prevYaw > 0) prevYaw += 360;
         } else {
-            if (prevYaw - yaw > 0) {
-                prevYaw -= 360;
-            }
+            if (prevYaw - yaw > 0) prevYaw -= 360;
         }
 
         float interpolatedYaw = prevYaw + (yaw - prevYaw) * tickDelta;
 
         matrices.pushPose();
         matrices.translate(0.5, 0.5, 0.5);
+
+        // Rotate based on AXIS
+        switch (entity.getBlockState().getValue(GearBlock.AXIS)) {
+            case X -> matrices.mulPose(new Quaternionf().rotateZ((float) Math.toRadians(90))); // Y→X
+            case Z -> matrices.mulPose(new Quaternionf().rotateX((float) Math.toRadians(90))); // Y→Z
+            case Y -> {} // no-op
+        }
+
+        // Apply gear yaw rotation (always around Y in model space)
         matrices.mulPose(new Quaternionf().rotateY((float) Math.toRadians(interpolatedYaw)));
         matrices.translate(-0.5, -0.5, -0.5);
 
