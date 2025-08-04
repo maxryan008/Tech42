@@ -1,5 +1,6 @@
-package dev.maximus.techcore.api.mechanical;
+package dev.maximus.techcore.api.mechanical.shaft;
 
+import dev.maximus.techcore.api.mechanical.gear.GearMaterial;
 import net.minecraft.resources.ResourceLocation;
 
 public class ShaftType {

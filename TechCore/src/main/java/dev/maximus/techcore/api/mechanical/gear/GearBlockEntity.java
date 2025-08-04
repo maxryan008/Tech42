@@ -1,6 +1,8 @@
-package dev.maximus.techcore.api.mechanical;
+package dev.maximus.techcore.api.mechanical.gear;
 
 import dev.maximus.techcore.TechcoreBlockEntities;
+import dev.maximus.techcore.api.mechanical.MechanicalNode;
+import dev.maximus.techcore.api.mechanical.TechcoreMechanicalPartRegistry;
 import dev.maximus.techcore.mechanical.graph.MechanicalGraphManager;
 import dev.maximus.techcore.model.ModelBuilder;
 import dev.maximus.techcore.model.QuadGeometryData;

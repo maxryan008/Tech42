@@ -1,6 +1,7 @@
-package dev.maximus.techcore.api.mechanical;
+package dev.maximus.techcore.api.mechanical.gear;
 
 
+import dev.maximus.techcore.api.mechanical.MechanicalNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

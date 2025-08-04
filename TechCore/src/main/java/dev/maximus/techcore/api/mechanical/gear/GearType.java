@@ -1,4 +1,4 @@
-package dev.maximus.techcore.api.mechanical;
+package dev.maximus.techcore.api.mechanical.gear;
 
 import net.minecraft.resources.ResourceLocation;
 

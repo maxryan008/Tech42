@@ -1,4 +1,4 @@
-package dev.maximus.techcore.api.mechanical;
+package dev.maximus.techcore.api.mechanical.shaft;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;

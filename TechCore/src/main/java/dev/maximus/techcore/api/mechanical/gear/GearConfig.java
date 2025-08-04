@@ -1,4 +1,4 @@
-package dev.maximus.techcore.api.mechanical;
+package dev.maximus.techcore.api.mechanical.gear;
 
 /**
  * Configuration for a gear type. These values are static for each gear type and do not change at runtime.

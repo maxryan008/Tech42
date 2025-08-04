@@ -2,8 +2,8 @@ package dev.maximus.techcore.client;
 
 import dev.maximus.techcore.Constant;
 import dev.maximus.techcore.TechcoreBlockEntities;
-import dev.maximus.techcore.api.mechanical.GearBlockEntity;
-import dev.maximus.techcore.api.mechanical.GearConfig;
+import dev.maximus.techcore.api.mechanical.gear.GearBlockEntity;
+import dev.maximus.techcore.api.mechanical.gear.GearConfig;
 import dev.maximus.techcore.api.mechanical.MechanicalPartModelDefinition;
 import dev.maximus.techcore.api.mechanical.TechcoreMechanicalPartRegistry;
 import dev.maximus.techcore.client.renderer.GearBlockEntityRenderer;

@@ -1,4 +1,4 @@
-package dev.maximus.techcore.api.mechanical;
+package dev.maximus.techcore.api.mechanical.gear;
 
 public record GearMaterial(
         String name,

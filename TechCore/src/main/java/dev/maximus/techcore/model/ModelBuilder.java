@@ -1,6 +1,6 @@
 package dev.maximus.techcore.model;
 
-import dev.maximus.techcore.api.mechanical.GearConfig;
+import dev.maximus.techcore.api.mechanical.gear.GearConfig;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

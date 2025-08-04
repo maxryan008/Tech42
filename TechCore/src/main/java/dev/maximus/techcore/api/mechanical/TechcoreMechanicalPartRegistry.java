@@ -3,6 +3,12 @@ package dev.maximus.techcore.api.mechanical;
 import dev.maximus.techcore.TechcoreBlockEntities;
 import dev.maximus.techcore.TechcoreBlocks;
 import dev.maximus.techcore.TechcoreItems;
+import dev.maximus.techcore.api.mechanical.gear.GearBlock;
+import dev.maximus.techcore.api.mechanical.gear.GearBlockEntity;
+import dev.maximus.techcore.api.mechanical.gear.GearConfig;
+import dev.maximus.techcore.api.mechanical.shaft.ShaftBlock;
+import dev.maximus.techcore.api.mechanical.shaft.ShaftBlockEntity;
+import dev.maximus.techcore.api.mechanical.shaft.ShaftConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +31,7 @@ public class TechcoreMechanicalPartRegistry {
     private static final Map<ResourceLocation, Class<? extends GearConfig>> REGISTERED_GEAR_CONFIGS = new HashMap<>();
     private static final Map<ResourceLocation, Class<? extends ShaftConfig>> REGISTERED_SHAFT_CONFIGS = new HashMap<>();
 
-    public static <GC extends GearConfig & MechanicalMaterial, BE extends GearBlockEntity>void registerGear(
+    public static <GC extends GearConfig, BE extends GearBlockEntity>void registerGear(
         ResourceLocation id,
         Class<GC> gearClass,
         Class<BE> blockEntityClass,
@@ -71,9 +77,8 @@ public class TechcoreMechanicalPartRegistry {
         REGISTERED_GEAR_BLOCKS.put(blockModelId, block);
     }
 
-    public static <MM extends MechanicalMaterial, SC extends ShaftConfig, BE extends ShaftBlockEntity>void registerShaft(
+    public static <SC extends ShaftConfig, BE extends ShaftBlockEntity>void registerShaft(
             ResourceLocation id,
-            Class<MM> mechanicalMaterialClass,
             Class<SC> shaftConfigClass,
             Class<BE> blockEntityClass,
             ResourceLocation textureLocation

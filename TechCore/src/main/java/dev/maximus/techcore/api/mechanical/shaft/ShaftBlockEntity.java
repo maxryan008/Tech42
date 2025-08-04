@@ -1,4 +1,4 @@
-package dev.maximus.techcore.api.mechanical;
+package dev.maximus.techcore.api.mechanical.shaft;
 
 import dev.maximus.techcore.TechcoreBlockEntities;
 import net.minecraft.core.BlockPos;

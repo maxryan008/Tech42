@@ -1,5 +1,6 @@
 package dev.maximus.techcore.api.mechanical;
 
+import dev.maximus.techcore.api.mechanical.gear.GearConfig;
 import dev.maximus.techcore.mechanical.graph.GraphCluster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
